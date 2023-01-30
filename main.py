@@ -13,7 +13,7 @@ MARGIN = 20
 
 player = Actor("player")
 player.x = WIDTH / 2
-player.y = HEIGHT - 60
+player.y = HEIGHT / 2
 player.v = 2
 player.va = 2
 player.ac = 0.2
@@ -133,14 +133,12 @@ def update_asteroids():
 
 
 def update_player_lasers():
-    for las in player_lasers_list[:]:
-        las.x += math.sin(math.radians(las.angle - 180)) * las.v
-        las.y += math.cos(math.radians(las.angle - 180)) * las.v
+    for laser in player_lasers_list[:]:
+        laser.x += math.sin(math.radians(laser.angle - 180)) * laser.v
+        laser.y += math.cos(math.radians(laser.angle - 180)) * laser.v
 
-        if las.x > WIDTH + MARGIN or las.x < -MARGIN:
-            player_lasers_list.remove(las)
-        elif las.y > HEIGHT + MARGIN or las.y < -MARGIN:
-            player_lasers_list.remove(las)
+        if laser.x > WIDTH + MARGIN or laser.x < -MARGIN or laser.y > HEIGHT + MARGIN or laser.y < -MARGIN:
+            player_lasers_list.remove(laser)
 
 
 def update_enemies():
@@ -153,51 +151,51 @@ def update_enemies():
         enemy.y += math.cos(math.radians(enemy.angle - 180)) * enemy.v
 
         if random.random() < 0.005:
-            las = Actor("laser2")
-            las.angle = enemy.angle
-            las.x = enemy.x
-            las.y = enemy.y
-            las.v = random.randint(5, 10)
-            enemy_lasers_list.append(las)
+            laser = Actor("laser2")
+            laser.angle = enemy.angle
+            laser.x = enemy.x
+            laser.y = enemy.y
+            laser.v = random.randint(5, 10)
+            enemy_lasers_list.append(laser)
             sounds.laser2.play()
 
 
 def update_enemy_lasers():
-    for las in enemy_lasers_list[:]:
-        las.x += math.sin(math.radians(las.angle - 180)) * las.v
-        las.y += math.cos(math.radians(las.angle - 180)) * las.v
+    for laser in enemy_lasers_list[:]:
+        laser.x += math.sin(math.radians(laser.angle - 180)) * laser.v
+        laser.y += math.cos(math.radians(laser.angle - 180)) * laser.v
 
-        if las.x > WIDTH + MARGIN or las.x < -MARGIN:
-            enemy_lasers_list.remove(las)
-        elif las.y > HEIGHT + MARGIN or las.y < -MARGIN:
-            enemy_lasers_list.remove(las)
+        if laser.x > WIDTH + MARGIN or laser.x < -MARGIN:
+            enemy_lasers_list.remove(laser)
+        elif laser.y > HEIGHT + MARGIN or laser.y < -MARGIN:
+            enemy_lasers_list.remove(laser)
 
 
 def update_collisions():
-    for las in player_lasers_list[:]:
+    for laser in player_lasers_list[:]:
         for met in asteroids_list[:]:
-            if met.colliderect(las):
+            if met.colliderect(laser):
                 asteroids_list.remove(met)
-                player_lasers_list.remove(las)
+                player_lasers_list.remove(laser)
 
-    for las in enemy_lasers_list[:]:
+    for laser in enemy_lasers_list[:]:
         for met in asteroids_list[:]:
-            if met.colliderect(las):
+            if met.colliderect(laser):
                 asteroids_list.remove(met)
-                enemy_lasers_list.remove(las)
+                enemy_lasers_list.remove(laser)
 
-    for las in player_lasers_list[:]:
+    for laser in player_lasers_list[:]:
         for enemy in enemies_list[:]:
-            if enemy.colliderect(las):
+            if enemy.colliderect(laser):
                 enemies_list.remove(enemy)
-                player_lasers_list.remove(las)
+                player_lasers_list.remove(laser)
 
-    for las in enemy_lasers_list[:]:
-        if player.collidepoint(las.pos):
+    for laser in enemy_lasers_list[:]:
+        if player.collidepoint(laser.pos):
             player.lifes -= 1
             if player.lifes == 0:
                 sounds.game_over.play()
-            enemy_lasers_list.remove(las)
+            enemy_lasers_list.remove(laser)
 
     for enemy in enemies_list[:]:
         if player.collidepoint(enemy.pos):
@@ -206,12 +204,12 @@ def update_collisions():
                 sounds.game_over.play()
             enemies_list.remove(enemy)
 
-    for ast in asteroids_list[:]:
-        if player.collidepoint(ast.pos):
+    for asteroid in asteroids_list[:]:
+        if player.collidepoint(asteroid.pos):
             player.lifes -= 1
             if player.lifes == 0:
                 sounds.game_over.play()
-            asteroids_list.remove(ast)
+            asteroids_list.remove(asteroid)
 
 
 """EVENTS"""
@@ -258,12 +256,12 @@ def choose_position():
     return x, y
 
 
-def addTime():
+def add_time():
     if player.lifes > 0:
         player.time += 1
 
 
 """INITIALIZATION"""
 
-clock.schedule_interval(addTime, 1)
+clock.schedule_interval(add_time, 1)
 pgzrun.go()
